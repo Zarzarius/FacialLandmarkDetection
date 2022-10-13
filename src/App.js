@@ -38,6 +38,8 @@ function App() {
     }, 10);
   };
 
+  
+
   const detect = async (net) => {
     if (
       typeof webcamRef.current !== "undefined" &&
@@ -61,16 +63,28 @@ function App() {
       // OLD MODEL
       //       const face = await net.estimateFaces(video);
       // NEW MODEL
-      const face = await net.estimateFaces({input:video});
-      console.log(face);
+      const face = await net.estimateFaces({ input: video });
 
-      // Get canvas context
+      if (face[0]) {
+        const normalizedNoseYAxis = face[0].annotations.noseTip[0][1]/videoHeight
+        // if (face[0].boundingBox.topLeft[1] <= 20) console.count('Top corner reached!!');
+        // if (face[0].boundingBox.bottomRight[1] >= 500) console.count('Bottom corner reached!!');
+        // console.log(normalizedNoseYAxis);
+        // Get canvas context
       const ctx = canvasRef.current.getContext("2d");
-      requestAnimationFrame(()=>{drawMesh(face, ctx)});
+      requestAnimationFrame(() => {
+          ctx.fillStyle = "#FF0000";
+          ctx.fillRect(0, face[0].annotations.noseTip[0][1], 45, 10)
+        });
+        
+      // ctx.fillRect(0, face[0].annotations.noseTip[0][1], 45, 10);
+      // requestAnimationFrame(()=>{drawMesh(face, ctx)});
     }
+      }
+    
   };
 
-  useEffect(()=>{runFacemesh()}, []);
+  useEffect(()=>{runFacemesh()}, [runFacemesh]);
 
   return (
     <div className="App">
